@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Todo } from "../models/todo.model.mjs";
 import { ApiError } from "../utils/ApiError.mjs";
 import { ApiResponse } from "../utils/ApiResponse.mjs";
@@ -35,14 +36,49 @@ const getSingleTodoController = async (req, res) => {
   if (!todo) {
     throw new ApiError(404, "Todo not found");
   }
-  res.status(200).json(
-    new ApiResponse(200, todo)
-  )
+  res.status(200).json(new ApiResponse(200, todo));
 };
 
-const updateTodoController = async (req, res) => {};
+const updateTodoController = async (req, res) => {
+  const { id } = req.params;
 
-const deleteTodoController = async (req, res) => {};
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid todo ID");
+  }
+
+  try {
+    const updatedTodo = await Todo.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedTodo) {
+      throw new ApiError(404, "Todo not found");
+    }
+
+    res.status(200).json(new ApiResponse(200, updatedTodo));
+  } catch (error) {
+    throw new ApiError(400, error.message || "Todo not updated");
+  }
+};
+
+const deleteTodoController = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid todo ID");
+  }
+  try {
+    const deletedTodo = await Todo.findByIdAndDelete(id);
+    if (!deletedTodo) {
+      throw new ApiError(404, "Todo not found");
+    }
+    res
+      .status(200)
+      .json(new ApiResponse(200, deletedTodo, "Todo deleted Successfully"));
+  } catch (error) {
+    throw new ApiError(400, "Todo not deleted");
+  }
+};
 
 export {
   createTodoController,
