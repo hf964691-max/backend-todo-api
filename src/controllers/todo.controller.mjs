@@ -21,7 +21,7 @@ const createTodoController = async (req, res) => {
   res.status(201).json(new ApiResponse(201, { todo }));
 };
 
-const getTodoController = async (req, res) => {
+const getTodoController = async (_, res) => {
     const todos = await Todo.find({})
     res.status(200).json(
         new ApiResponse(200, {todos})
