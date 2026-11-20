@@ -2,31 +2,30 @@ import { Todo } from "../models/todo.model.mjs";
 import { ApiError } from "../utils/ApiError.mjs";
 import { ApiResponse } from "../utils/ApiResponse.mjs";
 
-
 const createTodoController = async (req, res) => {
-    const { title, completed } = req.body;
+  const { title, completed = false } = req.body;
 
-    if (!title) {
-        throw new ApiError(400, "title are required");
-    }
+  if (!title) {
+    throw new ApiError(400, "title are required");
+  }
 
-    const todo = await Todo.create({
-        title,
-        completed
-    })
+  const todo = await Todo.create({
+    title,
+    completed,
+  });
 
-    if (!todo) {
-        throw new ApiError(500, "todo not created")
-    }
+  if (!todo) {
+    throw new ApiError(500, "todo not created");
+  }
 
-    res.status(201).json(
-        new ApiResponse(201, {todo})
-    )
-
-}
+  res.status(201).json(new ApiResponse(201, { todo }));
+};
 
 const getTodoController = async (req, res) => {
+    const todos = await Todo.find({})
+    res.status(200).json(
+        new ApiResponse(200, {todos})
+    )
+};
 
-}
-
-export { createTodoController, getTodoController }
+export { createTodoController, getTodoController };
