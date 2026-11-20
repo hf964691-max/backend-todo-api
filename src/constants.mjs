@@ -1,1 +1,1 @@
-export const DB_NAME = 'todo-api';
+export const DB_NAME = 'todos';
