@@ -22,10 +22,32 @@ const createTodoController = async (req, res) => {
 };
 
 const getTodoController = async (_, res) => {
-    const todos = await Todo.find({})
-    res.status(200).json(
-        new ApiResponse(200, {todos})
-    )
+  const todos = await Todo.find({});
+  res.status(200).json(new ApiResponse(200, { todos }));
 };
 
-export { createTodoController, getTodoController };
+const getSingleTodoController = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    throw new ApiError(400, "Please enter a Todo Id");
+  }
+  const todo = await Todo.findById(id);
+  if (!todo) {
+    throw new ApiError(404, "Todo not found");
+  }
+  res.status(200).json(
+    new ApiResponse(200, todo)
+  )
+};
+
+const updateTodoController = async (req, res) => {};
+
+const deleteTodoController = async (req, res) => {};
+
+export {
+  createTodoController,
+  getTodoController,
+  getSingleTodoController,
+  updateTodoController,
+  deleteTodoController,
+};
